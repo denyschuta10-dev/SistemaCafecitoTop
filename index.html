@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CafecitoTop</title>
+
+<link rel="stylesheet" href="estilos.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<section id="login-section" class="login-section">
+  <div class="login-card">
+    <h1 class="login-titulo">Iniciar Sesión</h1>
+    <input type="text" id="login-usuario" placeholder="Usuario">
+    <input type="password" id="login-clave" placeholder="Contraseña">
+    <button id="btn-login">Ingresar</button>
+    <p id="login-error" style="display:none;">Error</p>
+  </div>
+</section>
+
+<!-- MAIN -->
+<main class="contenedor-principal" style="display:none;">
+  <h1>Sistema Inventario CafecitoTop</h1>
+
+  <!-- BOTONES PRINCIPALES -->
+  <section class="acciones">
+
+    <button id="btn-agregar">
+      <i class="fas fa-plus"></i>
+      <span>Agregar</span>
+    </button>
+
+    <!-- LOGO (opcional) 
+    <div class="logo-sistema">
+      <img src="logoSistema.png" alt="logo">
+    </div> --> 
+
+    <button id="btn-salir">
+      <i class="fas fa-sign-out-alt"></i>
+      <span>Salir</span>
+    </button>
+
+  </section>
+
+  <h2 id="titulo-inventario">
+    <i class="fas fa-list"></i> INVENTARIO
+  </h2>
+
+  <!-- BOTONES SECUNDARIOS -->
+  <section class="acciones-secundarias">
+    <button id="btn-vender"><i class="fas fa-cash-register"></i> Vender</button>
+    <button id="btn-eliminar"><i class="fas fa-trash"></i> Eliminar</button>
+    <button id="btn-editar"><i class="fas fa-edit"></i> Editar Precio</button>
+  </section>
+
+  <section id="inventario" class="inventario"></section>
+</main>
+
+<!-- PANEL DERECHO -->
+<aside class="panel-derecho" style="display:none;">
+
+  <div id="dinero-actual" class="dinero-actual">
+    Dinero actual: Q0.00
+  </div>
+
+  <div class="registro-actividades">
+    <h2>Registro de Actividades</h2>
+    <ul id="registro-lista"></ul>
+  </div>
+
+</aside>
+
+<!-- MODAL PRODUCTO -->
+<div id="modal-producto" class="modal">
+  <div class="modal-contenido">
+    <span class="modal-close" id="close-modal-producto">&times;</span>
+    <h2>Detalles del Producto</h2>
+    <div id="modal-producto-detalles"></div>
+  </div>
+</div>
+
+<!-- MODAL ACTIVIDAD -->
+<div id="modal-actividad" class="modal">
+  <div class="modal-contenido">
+    <span class="modal-close" id="close-modal-actividad">&times;</span>
+    <h2>Detalles de la Actividad</h2>
+    <div id="modal-actividad-detalles"></div>
+  </div>
+</div>
+
+<script src="Proyecto.js" defer></script>
+</body>
+</html>
