@@ -68,8 +68,8 @@ function login() {
     const c = document.getElementById("login-clave").value;
 
     if (u === "Denys" && c === "123") {
-        localStorage.setItem("sesion", "true");
-        localStorage.setItem("usuario", u);
+        sessionStorage.setItem("sesion", "true");
+        sessionStorage.setItem("usuario", u);
 
         document.getElementById("login-section").style.display = "none";
         document.querySelector("main").style.display = "block";
@@ -84,7 +84,7 @@ function login() {
 
 // ================= SESION =================
 function verificarSesion() {
-    if (localStorage.getItem("sesion") === "true") {
+    if (sessionStorage.getItem("sesion") === "true") {
         document.getElementById("login-section").style.display = "none";
         document.querySelector("main").style.display = "block";
         document.querySelector("aside").style.display = "flex";
@@ -113,8 +113,8 @@ function salir() {
 
     if (!confirmar) return;
 
-    localStorage.removeItem("sesion");
-    localStorage.removeItem("usuario");
+    sessionStorage.removeItem("sesion");
+    sessionStorage.removeItem("usuario");
 
     document.getElementById("login-section").style.display = "flex";
     document.querySelector("main").style.display = "none";
