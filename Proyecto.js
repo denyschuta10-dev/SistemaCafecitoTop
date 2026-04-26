@@ -113,7 +113,8 @@ function salir() {
 
     if (!confirmar) return;
 
-    localStorage.clear();
+    localStorage.removeItem("sesion");
+    localStorage.removeItem("usuario");
 
     document.getElementById("login-section").style.display = "flex";
     document.querySelector("main").style.display = "none";
