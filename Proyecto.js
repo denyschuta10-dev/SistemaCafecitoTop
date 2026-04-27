@@ -97,12 +97,19 @@ function verificarSesion() {
 
 // ================= CARGAR TODO =================
 function cargarDatos() {
-    const dinero = localStorage.getItem("dinero");
-    if (dinero) dineroActual = parseFloat(dinero);
+    // 1. Traer el balance
+    fetch("/balance")
+        .then(r => r.json())
+        .then(data => {
+            dineroActual = parseFloat(data.dinero_actual || 0);
+            document.getElementById("dinero-actual").textContent = "Dinero actual: Q" + dineroActual.toFixed(2);
+        });
 
-    actualizarDinero();
+    // 2. Traer los productos
     verInventario();
-    cargarRegistros();
+
+    // 3. Traer las actividades
+    cargarRegistros(); 
 }
 
 
@@ -238,13 +245,10 @@ function vender() {
     .then(data => {
         const p = data.find(x => x.codigo == codigo);
         if (!p) return alert("No encontrado");
-
         if (cantidad > p.cantidad) return alert("Sin stock");
 
         p.cantidad -= cantidad;
-
         dineroActual += p.precio * cantidad;
-        localStorage.setItem("dinero", dineroActual);
 
         fetch(API + "/" + p.id, {
             method: "PUT",
@@ -252,7 +256,7 @@ function vender() {
             body: JSON.stringify(p)
         }).then(() => {
             agregarRegistro("Venta: " + p.nombre);
-            actualizarDinero();
+            actualizarDinero(); // Solo una vez aquí, cuando la venta se confirma
             verInventario();
         });
     });
@@ -319,57 +323,43 @@ function editarPrecio() {
 
 // ================= DINERO =================
 function actualizarDinero() {
-    document.getElementById("dinero-actual").textContent =
-    "Dinero actual: Q" + dineroActual.toFixed(2);
+    document.getElementById("dinero-actual").textContent = "Dinero actual: Q" + dineroActual.toFixed(2);
     
-    localStorage.setItem("dinero", dineroActual);
+    // Guardar en la nube (MySQL)
+    fetch("/balance", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ dinero: dineroActual })
+    });
 }
-
 
 // ================= REGISTROS (CON MODAL FUNCIONAL) =================
 function agregarRegistro(texto) {
-
-    const li = document.createElement("li");
-    const fecha = new Date().toLocaleString();
-
-    const obj = { texto, fecha };
-
-    li.textContent = `[${fecha}] ${texto}`;
-
-    li.addEventListener("click", () => abrirModalActividad(obj));
-
-    document.getElementById("registro-lista").prepend(li);
-
-    guardarRegistros();
+    fetch("/actividades", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ texto: texto })
+    }).then(() => cargarRegistros());
 }
 
-function guardarRegistros() {
-    const lista = document.querySelectorAll("#registro-lista li");
-    const arr = [];
-
-    lista.forEach(li => arr.push(li.textContent));
-
-    localStorage.setItem("registros", JSON.stringify(arr));
-}
 
 function cargarRegistros() {
-    const data = JSON.parse(localStorage.getItem("registros") || "[]");
+    fetch("/actividades")
+    .then(r => r.json())
+    .then(data => {
+        const lista = document.getElementById("registro-lista");
+        lista.innerHTML = "";
+        data.forEach(act => {
+            const li = document.createElement("li");
+            const fecha = new Date(act.fecha).toLocaleString();
+            li.textContent = `[${fecha}] ${act.texto}`;
+            
+            li.addEventListener("click", () => {
+                abrirModalActividad({ texto: act.texto, fecha: fecha });
+            });
 
-    const lista = document.getElementById("registro-lista");
-    lista.innerHTML = "";
-
-    data.forEach(t => {
-        const li = document.createElement("li");
-        li.textContent = t;
-
-        li.addEventListener("click", () => {
-            const texto = t.replace(/\[.*?\]\s/, "");
-            const fecha = t.match(/\[(.*?)\]/)?.[1];
-
-            abrirModalActividad({ texto, fecha });
+            lista.appendChild(li);
         });
-
-        lista.appendChild(li);
     });
 }
 

@@ -10,11 +10,11 @@ app.use(express.static('.'));
 
 // 🔌 conexión MySQL
 const conexion = mysql.createConnection({
-    host: process.env.MYSQLHOST || process.env.DB_HOST || "localhost",
-    user: process.env.MYSQLUSER || process.env.DB_USER || "root",
-    password: process.env.MYSQLPASSWORD || process.env.DB_PASSWORD || "",
-    database: process.env.MYSQLDATABASE || process.env.DB_NAME || "inventario_db",
-    port: process.env.MYSQLPORT || 3306
+    host: process.env.MYSQL_HOST || process.env.MYSQLHOST || process.env.DB_HOST || "localhost",
+    user: process.env.MYSQL_USER || process.env.MYSQLUSER || process.env.DB_USER || "root",
+    password: process.env.MYSQL_PASSWORD || process.env.MYSQLPASSWORD || process.env.DB_PASSWORD || "",
+    database: process.env.MYSQL_DATABASE || process.env.MYSQLDATABASE || process.env.DB_NAME || "inventario_db",
+    port: process.env.MYSQL_PORT || process.env.MYSQLPORT || 3306
 });
 
 conexion.connect(err => {
@@ -77,6 +77,43 @@ app.delete("/productos/:id", (req, res) => {
         res.json({ mensaje: "Eliminado" });
     });
 });
+
+// ================= RUTAS PARA BALANCE Y ACTIVIDADES (NUEVO) =================
+
+// Obtener dinero
+app.get("/balance", (req, res) => {
+    conexion.query("SELECT dinero_actual FROM balance WHERE id = 1", (err, data) => {
+        if (err) return res.status(500).json(err);
+        res.json(data[0] || { dinero_actual: 0 });
+    });
+});
+
+// Actualizar dinero
+app.put("/balance", (req, res) => {
+    const { dinero } = req.body;
+    conexion.query("UPDATE balance SET dinero_actual = ? WHERE id = 1", [dinero], (err) => {
+        if (err) return res.status(500).json(err);
+        res.json({ mensaje: "Dinero actualizado" });
+    });
+});
+
+// Obtener historial
+app.get("/actividades", (req, res) => {
+    conexion.query("SELECT * FROM actividades ORDER BY id DESC LIMIT 30", (err, data) => {
+        if (err) return res.status(500).json(err);
+        res.json(data);
+    });
+});
+
+// Guardar actividad
+app.post("/actividades", (req, res) => {
+    const { texto } = req.body;
+    conexion.query("INSERT INTO actividades (texto, fecha) VALUES (?, NOW())", [texto], (err) => {
+        if (err) return res.status(500).json(err);
+        res.json({ mensaje: "Actividad guardada" });
+    });
+});
+
 
 
 // ================= SERVER =================
