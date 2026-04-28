@@ -128,7 +128,7 @@ function salir() {
     document.querySelector("aside").style.display = "none";
 }
 
-// ================= INVENTARIO =================
+
 // ================= INVENTARIO (ACTUALIZADO) =================
 function verInventario() {
     fetch(API)
@@ -218,34 +218,42 @@ function agregar() {
 
 // ================= ELIMINAR =================
 function eliminar() {
-    const codigo = prompt("Código:");
+    const codigo = prompt("Ingrese el código del producto que desea eliminar:");
+    if (!codigo) return; // Si cancela el prompt, no hace nada
 
     fetch(API)
     .then(r => r.json())
     .then(data => {
         const p = data.find(x => x.codigo == codigo);
-        if (!p) return alert("No encontrado");
+        if (!p) return alert("❌ Producto no encontrado");
 
-        fetch(API + "/" + p.id, { method: "DELETE" })
-        .then(() => {
-            agregarRegistro("Eliminado: " + p.nombre);
-            verInventario();
-        });
+        // --- AJUSTE DE SEGURIDAD: Confirmación antes de borrar ---
+        const confirmar = confirm(`⚠️ ¿Estás seguro de que quieres eliminar el producto: "${p.nombre}"?\nEsta acción no se puede deshacer.`);
+
+        if (confirmar) {
+            fetch(API + "/" + p.id, { method: "DELETE" })
+            .then(() => {
+                agregarRegistro("Eliminado: " + p.nombre);
+                verInventario();
+                alert("✅ Producto eliminado correctamente");
+            });
+        }
     });
 }
 
-
 // ================= VENDER =================
 function vender() {
-    const codigo = prompt("Código:");
+    const codigo = prompt("Código del producto a vender:");
     const cantidad = parseInt(prompt("Cantidad:"));
+
+    if (!codigo || isNaN(cantidad)) return;
 
     fetch(API)
     .then(r => r.json())
     .then(data => {
         const p = data.find(x => x.codigo == codigo);
-        if (!p) return alert("No encontrado");
-        if (cantidad > p.cantidad) return alert("Sin stock");
+        if (!p) return alert("❌ No encontrado");
+        if (cantidad > p.cantidad) return alert("❌ Sin stock suficiente");
 
         p.cantidad -= cantidad;
         dineroActual += p.precio * cantidad;
@@ -256,12 +264,14 @@ function vender() {
             body: JSON.stringify(p)
         }).then(() => {
             agregarRegistro("Venta: " + p.nombre);
-            actualizarDinero(); // Solo una vez aquí, cuando la venta se confirma
+            actualizarDinero();
             verInventario();
+            
+            // --- AJUSTE DE ÉXITO: Mensaje de confirmación ---
+            alert("✨ ¡VENTA REALIZADA EXITOSAMENTE! ✨");
         });
     });
 }
-
 
 // ================= BUSCAR =================
 function buscar() {
