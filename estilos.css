@@ -592,45 +592,56 @@ h1 {
   }
 }
 
-/* La imagen cuadrada y compacta */
+/* La imagen cuadrada ligeramente más grande para la nueva tarjeta */
 .img-producto-tarjeta {
-    width: 85px;           /* Tamaño compacto */
-    height: 85px;          /* Proporción 1:1 */
-    object-fit: cover;     /* Recorte inteligente para no deformar */
-    border-radius: 8px;    /* Bordes suavemente redondeados */
-    margin-bottom: 8px;
-    background-color: #f9f9f9; /* Fondo por si la imagen tiene transparencias */
-    border: 1px solid #eee;   /* Borde fino para separar del fondo blanco */
+    width: 100px;          /* Subimos de 85px a 100px */
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
 }
 
-/* Ajuste de la tarjeta para que no ocupe mucho espacio */
+/* Tarjeta más ancha y con menos margen lateral para que se junten */
 .tarjeta {
-    width: 140px;          /* Ancho fijo para que quepan varias en fila */
-    padding: 12px;
-    margin: 8px;
+    width: 180px;          /* De 140px subimos a 180px para que ocupen más espacio */
+    padding: 15px;
+    margin: 10px 5px;      /* 10px arriba/abajo, solo 5px a los lados */
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    font-size: 0.9rem;     /* Texto un poco más pequeño para ahorrar espacio */
+    font-size: 0.95rem;    /* Un poquito más grande el texto */
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05); /* Sombra suave para que resalten */
     transition: transform 0.2s;
+    box-sizing: border-box; 
 }
 
 .tarjeta:hover {
-    transform: scale(1.03); /* Efecto sutil al pasar el mouse */
+    transform: translateY(-5px); /* Ahora flota un poco hacia arriba al pasar el mouse */
+    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
 }
 
 /* Ajuste de los textos dentro de la tarjeta */
 .tarjeta h3 {
-    font-size: 1rem;
-    margin: 5px 0;
-    white-space: nowrap;    /* Evita que el nombre largo rompa el diseño */
+    font-size: 1.1rem;
+    margin: 8px 0;
+    color: #006241;         /* Color verde tipo Starbucks para el nombre */
+    white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis; /* Pone "..." si el nombre es muy largo */
+    text-overflow: ellipsis;
     width: 100%;
+    font-weight: bold;
 }
 
 .tarjeta p {
-    margin: 2px 0;
-    color: #666;
+    margin: 3px 0;
+    color: #444;
+    background: #f1f1f1;    /* Un fondo gris clarito para los datos (Código, Cantidad) */
+    width: 100%;
+    border-radius: 4px;
+    padding: 2px 0;
 }
