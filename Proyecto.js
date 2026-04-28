@@ -129,6 +129,7 @@ function salir() {
 }
 
 // ================= INVENTARIO =================
+// ================= INVENTARIO (ACTUALIZADO) =================
 function verInventario() {
     fetch(API)
     .then(r => r.json())
@@ -139,20 +140,26 @@ function verInventario() {
         data.forEach(p => {
             const div = document.createElement("div");
             div.className = "tarjeta";
-
+            
+            // Si tiene link usa la foto, si no, usa un icono por defecto. 
+            // 'onerror' sirve por si el link está roto.
+            const imagen = p.imagen_url 
+            ? `<img src="${p.imagen_url}" class="img-producto-tarjeta" onerror="this.src='https://cdn-icons-png.flaticon.com/512/924/924514.png'">` 
+            : `<i class="fas fa-coffee fa-3x" style="margin-bottom:10px; color:#006241;"></i>`;
+            
             div.innerHTML = `
-                <h3>${p.nombre}</h3>
-                <p>Código: ${p.codigo}</p>
-                <p>Cantidad: ${p.cantidad}</p>
-                <p>Precio: Q${p.precio}</p>
+            ${imagen} 
+            <h3>${p.nombre}</h3>
+            <p>Código: ${p.codigo}</p>
+            <p>Cantidad: ${p.cantidad}</p>
+            <p>Precio: Q${p.precio}</p>
             `;
-
+            
             div.addEventListener("click", () => abrirModalProducto(p));
             cont.appendChild(div);
         });
     });
 }
-
 
 // ================= AGREGAR (SIN REPETIDOS) =================
 function agregar() {
@@ -201,16 +208,9 @@ function agregar() {
         const nombre = prompt("Nombre:");
         const cantidad = parseInt(prompt("Cantidad:"));
         const precio = parseFloat(prompt("Precio:"));
+        const imagen_url = prompt("Link de la imagen (URL):");
 
-        fetch(API, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ codigo, nombre, cantidad, precio })
-        }).then(() => {
-            alert("PRODUCTO AGREGADO");
-            agregarRegistro("Producto agregado: " + nombre);
-            verInventario();
-        });
+        agregarSeguro(codigo, nombre, cantidad, precio, imagen_url); 
 
     });
 }
@@ -366,12 +366,19 @@ function cargarRegistros() {
 
 // ================= MODALES =================
 function abrirModalProducto(p) {
+    const vistaPreviaImagen = p.imagen_url 
+        ? `<img src="${p.imagen_url}" style="width:100%; max-height:200px; object-fit:contain; margin-bottom:15px; border-radius:8px;">` 
+        : `<div style="text-align:center; margin-bottom:15px;"><i class="fas fa-coffee fa-4x" style="color:#006241;"></i></div>`;
+
     document.getElementById("modal-producto-detalles").innerHTML = `
-        <div>ID: ${p.id}</div>
-        <div>Nombre: ${p.nombre}</div>
-        <div>Código: ${p.codigo}</div>
-        <div>Cantidad: ${p.cantidad}</div>
-        <div>Precio: Q${p.precio}</div>
+        ${vistaPreviaImagen}
+        <div style="border-top: 1px solid #eee; pt-3">
+            <div><strong>ID:</strong> ${p.id}</div>
+            <div><strong>Nombre:</strong> ${p.nombre}</div>
+            <div><strong>Código:</strong> ${p.codigo}</div>
+            <div><strong>Cantidad:</strong> ${p.cantidad}</div>
+            <div><strong>Precio:</strong> Q${p.precio}</div>
+        </div>
     `;
     document.getElementById("modal-producto").classList.add("activo");
 }
@@ -448,7 +455,7 @@ function validarProductoExistente(codigo, nombre) {
 // =========================
 // 🔥 MEJORA: AGREGAR CON ALERTA INSTANTÁNEA
 // =========================
-function agregarSeguro(codigo, nombre, cantidad, precio) {
+function agregarSeguro(codigo, nombre, cantidad, precio, imagen_url) { // <--- Agregamos imagen_url aquí
 
     validarProductoExistente(codigo, nombre).then(existe => {
 
@@ -460,9 +467,11 @@ function agregarSeguro(codigo, nombre, cantidad, precio) {
         fetch(API, {
             method: "POST",
             headers: {"Content-Type":"application/json"},
-            body: JSON.stringify({codigo, nombre, cantidad, precio})
+            // Enviamos también la imagen a la base de datos
+            body: JSON.stringify({codigo, nombre, cantidad, precio, imagen_url}) 
         }).then(() => {
-            agregarRegistro("Producto agregado seguro: " + nombre);
+            alert("✅ PRODUCTO AGREGADO CON ÉXITO");
+            agregarRegistro("Producto agregado: " + nombre);
             verInventario();
         });
     });

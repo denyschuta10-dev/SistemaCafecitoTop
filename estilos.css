@@ -592,3 +592,45 @@ h1 {
   }
 }
 
+/* La imagen cuadrada y compacta */
+.img-producto-tarjeta {
+    width: 85px;           /* Tamaño compacto */
+    height: 85px;          /* Proporción 1:1 */
+    object-fit: cover;     /* Recorte inteligente para no deformar */
+    border-radius: 8px;    /* Bordes suavemente redondeados */
+    margin-bottom: 8px;
+    background-color: #f9f9f9; /* Fondo por si la imagen tiene transparencias */
+    border: 1px solid #eee;   /* Borde fino para separar del fondo blanco */
+}
+
+/* Ajuste de la tarjeta para que no ocupe mucho espacio */
+.tarjeta {
+    width: 140px;          /* Ancho fijo para que quepan varias en fila */
+    padding: 12px;
+    margin: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    font-size: 0.9rem;     /* Texto un poco más pequeño para ahorrar espacio */
+    transition: transform 0.2s;
+}
+
+.tarjeta:hover {
+    transform: scale(1.03); /* Efecto sutil al pasar el mouse */
+}
+
+/* Ajuste de los textos dentro de la tarjeta */
+.tarjeta h3 {
+    font-size: 1rem;
+    margin: 5px 0;
+    white-space: nowrap;    /* Evita que el nombre largo rompa el diseño */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Pone "..." si el nombre es muy largo */
+    width: 100%;
+}
+
+.tarjeta p {
+    margin: 2px 0;
+    color: #666;
+}

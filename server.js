@@ -38,30 +38,34 @@ app.get("/productos", (req, res) => {
 
 
 // POST
-app.post("/productos", (req, res) => {
-    const { codigo, nombre, cantidad, precio } = req.body;
-
-    const sql = "INSERT INTO productos (codigo, nombre, cantidad, precio) VALUES (?, ?, ?, ?)";
-
-    conexion.query(sql, [codigo, nombre, cantidad, precio], (err) => {
-        if (err) return res.status(500).json(err);
-        res.json({ mensaje: "Producto agregado" });
+app.post('/productos', (req, res) => {
+    // 1. Agregamos imagen_url aquí
+    const { codigo, nombre, cantidad, precio, imagen_url } = req.body; 
+    
+    // 2. Agregamos un "?" extra al final
+    const query = "INSERT INTO productos (codigo, nombre, cantidad, precio, imagen_url) VALUES (?, ?, ?, ?, ?)";
+    
+    // 3. Pasamos imagen_url en el arreglo y usamos "conexion" (no db)
+    conexion.query(query, [codigo, nombre, cantidad, precio, imagen_url], (err, result) => {
+        if (err) return res.status(500).send(err);
+        res.send("Producto agregado con éxito");
     });
 });
 
 
 // PUT (CORREGIDO)
 app.put("/productos/:id", (req, res) => {
-    const { codigo, nombre, cantidad, precio } = req.body;
+    // Agregamos imagen_url aquí también
+    const { codigo, nombre, cantidad, precio, imagen_url } = req.body;
     const { id } = req.params;
 
     const sql = `
         UPDATE productos 
-        SET codigo = ?, nombre = ?, cantidad = ?, precio = ?
+        SET codigo = ?, nombre = ?, cantidad = ?, precio = ?, imagen_url = ?
         WHERE id = ?
     `;
 
-    conexion.query(sql, [codigo, nombre, cantidad, precio, id], (err) => {
+    conexion.query(sql, [codigo, nombre, cantidad, precio, imagen_url, id], (err) => {
         if (err) return res.status(500).json(err);
         res.json({ mensaje: "Actualizado" });
     });
@@ -79,7 +83,6 @@ app.delete("/productos/:id", (req, res) => {
 });
 
 // ================= RUTAS PARA BALANCE Y ACTIVIDADES (NUEVO) =================
-
 // Obtener dinero
 app.get("/balance", (req, res) => {
     conexion.query("SELECT dinero_actual FROM balance WHERE id = 1", (err, data) => {
@@ -114,10 +117,7 @@ app.post("/actividades", (req, res) => {
     });
 });
 
-
-
 // ================= SERVER =================
-
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
