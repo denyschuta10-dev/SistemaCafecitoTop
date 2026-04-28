@@ -250,57 +250,65 @@ h1 {
 /* ===============================
    TARJETAS INVENTARIO
 =============================== */
-.inventario {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 20px;
+/* 1. EL CONTENEDOR: Forzamos a que las tarjetas se distribuyan mejor */
+#inventario {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* Centra el grupo de tarjetas */
+    gap: 15px;               /* Controla exactamente el espacio entre tarjetas */
+    padding: 20px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
+/* 2. LA TARJETA: Mucho más ancha y robusta */
 .tarjeta {
-  background: white;
-  border-radius: 16px;
-  padding: 18px;
-  border: 1px solid #ede8e2;
-  box-shadow: 0 4px 12px var(--sombra);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-  cursor: pointer;
-}
-
-.tarjeta::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, var(--verde-principal), var(--cafe-claro));
+    width: 220px;            /* ¡Mucho más ancho! */
+    padding: 20px;
+    margin: 0;               /* Quitamos el margen, el 'gap' del contenedor hará el trabajo */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    background-color: #fff;
+    border-radius: 15px;     /* Bordes más curvos para un look moderno */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08); 
+    transition: all 0.3s ease;
+    cursor: pointer;
 }
 
 .tarjeta:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 10px 24px var(--sombra);
+    transform: translateY(-8px);
+    box-shadow: 0 12px 20px rgba(0,0,0,0.15);
 }
 
+/* 3. LA IMAGEN: Más grande para que no se pierda en la tarjeta ancha */
+.img-producto-tarjeta {
+    width: 140px;            /* Subimos a 140px para que destaque */
+    height: 140px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #f0f0f0;
+}
+
+/* 4. TEXTOS: Más legibles */
 .tarjeta h3 {
-  color: var(--verde-principal);
-  margin-bottom: 10px;
-  text-align: center;
-  font-weight: 700;
-  font-size: 1.1rem;
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    color: #006241;
+    font-weight: 800;
 }
 
 .tarjeta p {
-  background: linear-gradient(135deg, #f0f0f0, var(--crema));
-  padding: 10px;
-  border-radius: 10px;
-  margin-top: 8px;
-  text-align: center;
-  color: var(--cafe-oscuro);
-  font-weight: 600;
+    margin: 4px 0;
+    font-weight: 500;
+    color: #555;
+    background: #f8f9fa;
+    width: 100%;
+    padding: 5px 0;
+    border-radius: 6px;
 }
-
 /* ===============================
    PANEL DERECHO
 =============================== */
@@ -592,56 +600,3 @@ h1 {
   }
 }
 
-/* La imagen cuadrada ligeramente más grande para la nueva tarjeta */
-.img-producto-tarjeta {
-    width: 100px;          /* Subimos de 85px a 100px */
-    height: 100px;
-    object-fit: cover;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    background-color: #f9f9f9;
-    border: 1px solid #eee;
-}
-
-/* Tarjeta más ancha y con menos margen lateral para que se junten */
-.tarjeta {
-    width: 180px;          /* De 140px subimos a 180px para que ocupen más espacio */
-    padding: 15px;
-    margin: 10px 5px;      /* 10px arriba/abajo, solo 5px a los lados */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    font-size: 0.95rem;    /* Un poquito más grande el texto */
-    background-color: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.05); /* Sombra suave para que resalten */
-    transition: transform 0.2s;
-    box-sizing: border-box; 
-}
-
-.tarjeta:hover {
-    transform: translateY(-5px); /* Ahora flota un poco hacia arriba al pasar el mouse */
-    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-}
-
-/* Ajuste de los textos dentro de la tarjeta */
-.tarjeta h3 {
-    font-size: 1.1rem;
-    margin: 8px 0;
-    color: #006241;         /* Color verde tipo Starbucks para el nombre */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    width: 100%;
-    font-weight: bold;
-}
-
-.tarjeta p {
-    margin: 3px 0;
-    color: #444;
-    background: #f1f1f1;    /* Un fondo gris clarito para los datos (Código, Cantidad) */
-    width: 100%;
-    border-radius: 4px;
-    padding: 2px 0;
-}
