@@ -268,7 +268,7 @@ function vender() {
             verInventario();
             
             // --- AJUSTE DE ÉXITO: Mensaje de confirmación ---
-            alert("✨ ¡VENTA REALIZADA EXITOSAMENTE! ✨");
+            alert(" ¡VENTA REALIZADA EXITOSAMENTE! ✅  ");
         });
     });
 }
