@@ -2,8 +2,8 @@
    VARIABLES (STARBUCKS STYLE)
 =============================== */
 :root {
-  --verde-principal: #00704A;
-  --verde-secundario: #00A862;
+  --verde-principal: #020202;
+  --verde-secundario: #0a0c0b;
   --cafe-oscuro: #6F4E37;
   --cafe-claro: #D4A574;
   --crema: #F5F1E8;
@@ -601,4 +601,5 @@ h1 {
     width: 100%;
   }
 }
+
 

@@ -39,17 +39,49 @@ app.get("/productos", (req, res) => {
 
 // POST
 app.post('/productos', (req, res) => {
-    // 1. Agregamos imagen_url aquí
-    const { codigo, nombre, cantidad, precio, imagen_url } = req.body; 
-    
-    // 2. Agregamos un "?" extra al final
-    const query = "INSERT INTO productos (codigo, nombre, cantidad, precio, imagen_url) VALUES (?, ?, ?, ?, ?)";
-    
-    // 3. Pasamos imagen_url en el arreglo y usamos "conexion" (no db)
-    conexion.query(query, [codigo, nombre, cantidad, precio, imagen_url], (err, result) => {
-        if (err) return res.status(500).send(err);
-        res.send("Producto agregado con éxito");
-    });
+
+    const { codigo, nombre, cantidad, precio, imagen_url } = req.body;
+
+    // Verificar si el código ya fue usado antes
+    conexion.query(
+        "SELECT * FROM codigos_usados WHERE codigo = ?",
+        [codigo],
+        (err, usados) => {
+
+            if (err) return res.status(500).send(err);
+
+            // Si ya existe el código
+            if (usados.length > 0) {
+                return res.status(400).json({
+                    mensaje: "❌ Este código ya fue utilizado anteriormente"
+                });
+            }
+
+            // Insertar producto
+            const query = `
+                INSERT INTO productos
+                (codigo, nombre, cantidad, precio, imagen_url)
+                VALUES (?, ?, ?, ?, ?)
+            `;
+
+            conexion.query(
+                query,
+                [codigo, nombre, cantidad, precio, imagen_url],
+                (err) => {
+
+                    if (err) return res.status(500).send(err);
+
+                    // Guardar el código como usado
+                    conexion.query(
+                        "INSERT INTO codigos_usados (codigo) VALUES (?)",
+                        [codigo]
+                    );
+
+                    res.send("✅ Producto agregado");
+                }
+            );
+        }
+    );
 });
 
 
