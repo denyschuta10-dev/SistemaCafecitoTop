@@ -1,7 +1,6 @@
 const API = "/productos";
 
 let ingresos = 0;
-let egresos = 0;
 let saldo = 0;
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -173,9 +172,6 @@ function cargarDatos() {
 
     document.getElementById("ingresos").textContent =
         "Ingresos: Q" + ingresos.toFixed(2);
-
-    document.getElementById("egresos").textContent =
-        "Egresos: Q" + egresos.toFixed(2);
 
     document.getElementById("saldo").textContent =
         "Saldo: Q" + saldo.toFixed(2);
@@ -395,7 +391,7 @@ function vender() {
         p.cantidad -= cantidad;
         const totalVenta = p.precio * cantidad;
         ingresos += totalVenta;
-        saldo = ingresos - egresos;
+        saldo = ingresos;
 
         fetch(API + "/" + p.id, {
             method: "PUT",
@@ -476,9 +472,6 @@ function actualizarDinero() {
     document.getElementById("ingresos").textContent =
         "Ingresos: Q" + ingresos.toFixed(2);
 
-    document.getElementById("egresos").textContent =
-        "Egresos: Q" + egresos.toFixed(2);
-
     document.getElementById("saldo").textContent =
         "Saldo: Q" + saldo.toFixed(2);
 
@@ -491,9 +484,7 @@ function actualizarDinero() {
         },
 
         body: JSON.stringify({
-
             ingresos,
-            egresos,
             saldo
         })
     });

@@ -134,15 +134,15 @@ app.get("/balance", (req, res) => {
 // Actualizar dinero
 app.put("/balance", (req, res) => {
 
-    const { ingresos, egresos, saldo } = req.body;
+    const { ingresos, saldo } = req.body;
 
     conexion.query(
 
         `UPDATE balance 
-        SET ingresos = ?, egresos = ?, saldo = ?
+        SET ingresos = ?, saldo = ?
         WHERE id = 1`,
 
-        [ingresos, egresos, saldo],
+        [ingresos, saldo],
 
         (err) => {
 
