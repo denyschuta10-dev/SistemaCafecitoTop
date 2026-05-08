@@ -155,3 +155,25 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log("🚀 Servidor en puerto " + PORT);
 });
+
+
+// Verificar si un código ya fue usado
+app.get("/verificar-codigo/:codigo", (req, res) => {
+
+    const { codigo } = req.params;
+
+    conexion.query(
+        "SELECT * FROM codigos_usados WHERE codigo = ?",
+        [codigo],
+        (err, data) => {
+
+            if (err) {
+                return res.status(500).json(err);
+            }
+
+            res.json({
+                usado: data.length > 0
+            });
+        }
+    );
+});

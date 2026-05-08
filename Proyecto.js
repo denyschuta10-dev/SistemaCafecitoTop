@@ -163,13 +163,17 @@ function verInventario() {
 
 // ================= AGREGAR (SIN REPETIDOS) =================
 function agregar() {
+
     const codigo = prompt("Código:");
+
     if (!codigo) return;
 
+    // Verificar productos actuales
     fetch(API)
     .then(r => r.json())
-    .then(data => {
+    .then(async (data) => {
 
+        // Producto existente actual
         const existe = data.find(p => p.codigo == codigo);
 
         if (existe) {
@@ -197,24 +201,38 @@ function agregar() {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(existe)
             }).then(() => {
+
                 agregarRegistro("Stock actualizado: " + existe.nombre);
+
                 verInventario();
-                alert("STOCK ACTUALIZADO");
+
+                alert("✅ STOCK ACTUALIZADO");
             });
 
             return;
         }
 
+        // 🔥 NUEVA VALIDACIÓN
+        // verificar si el código ya fue usado anteriormente
+
+        const respuestaCodigo = await fetch("/verificar-codigo/" + codigo);
+
+        const resultadoCodigo = await respuestaCodigo.json();
+
+        if (resultadoCodigo.usado) {
+            alert("❌ ESTE CÓDIGO YA FUE UTILIZADO");
+            return;
+        }
+
+        // SI EL CÓDIGO ES NUEVO
         const nombre = prompt("Nombre:");
         const cantidad = parseInt(prompt("Cantidad:"));
         const precio = parseFloat(prompt("Precio:"));
         const imagen_url = prompt("Link de la imagen (URL):");
 
-        agregarSeguro(codigo, nombre, cantidad, precio, imagen_url); 
-
+        agregarSeguro(codigo, nombre, cantidad, precio, imagen_url);
     });
 }
-
 
 // ================= ELIMINAR =================
 function eliminar() {
