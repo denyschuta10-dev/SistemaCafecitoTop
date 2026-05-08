@@ -117,19 +117,42 @@ app.delete("/productos/:id", (req, res) => {
 // ================= RUTAS PARA BALANCE Y ACTIVIDADES (NUEVO) =================
 // Obtener dinero
 app.get("/balance", (req, res) => {
-    conexion.query("SELECT dinero_actual FROM balance WHERE id = 1", (err, data) => {
-        if (err) return res.status(500).json(err);
-        res.json(data[0] || { dinero_actual: 0 });
-    });
+
+    conexion.query(
+
+        "SELECT * FROM balance WHERE id = 1",
+
+        (err, data) => {
+
+            if (err) return res.status(500).json(err);
+
+            res.json(data[0]);
+        }
+    );
 });
 
 // Actualizar dinero
 app.put("/balance", (req, res) => {
-    const { dinero } = req.body;
-    conexion.query("UPDATE balance SET dinero_actual = ? WHERE id = 1", [dinero], (err) => {
-        if (err) return res.status(500).json(err);
-        res.json({ mensaje: "Dinero actualizado" });
-    });
+
+    const { ingresos, egresos, saldo } = req.body;
+
+    conexion.query(
+
+        `UPDATE balance 
+        SET ingresos = ?, egresos = ?, saldo = ?
+        WHERE id = 1`,
+
+        [ingresos, egresos, saldo],
+
+        (err) => {
+
+            if (err) return res.status(500).json(err);
+
+            res.json({
+                mensaje: "Balance actualizado"
+            });
+        }
+    );
 });
 
 // Obtener historial

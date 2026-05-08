@@ -1,6 +1,8 @@
 const API = "/productos";
 
-let dineroActual = 0;
+let ingresos = 0;
+let egresos = 0;
+let saldo = 0;
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -162,9 +164,22 @@ function cargarDatos() {
     fetch("/balance")
         .then(r => r.json())
         .then(data => {
-            dineroActual = parseFloat(data.dinero_actual || 0);
-            document.getElementById("dinero-actual").textContent = "Dinero actual: Q" + dineroActual.toFixed(2);
-        });
+
+    ingresos = parseFloat(data.ingresos || 0);
+
+    egresos = parseFloat(data.egresos || 0);
+
+    saldo = parseFloat(data.saldo || 0);
+
+    document.getElementById("ingresos").textContent =
+        "Ingresos: Q" + ingresos.toFixed(2);
+
+    document.getElementById("egresos").textContent =
+        "Egresos: Q" + egresos.toFixed(2);
+
+    document.getElementById("saldo").textContent =
+        "Saldo: Q" + saldo.toFixed(2);
+});
 
     // 2. Traer los productos
     verInventario();
@@ -378,7 +393,9 @@ function vender() {
         if (cantidad > p.cantidad) return alert("❌ Sin stock suficiente");
 
         p.cantidad -= cantidad;
-        dineroActual += p.precio * cantidad;
+        const totalVenta = p.precio * cantidad;
+        ingresos += totalVenta;
+        saldo = ingresos - egresos;
 
         fetch(API + "/" + p.id, {
             method: "PUT",
@@ -455,13 +472,30 @@ function editarPrecio() {
 
 // ================= DINERO =================
 function actualizarDinero() {
-    document.getElementById("dinero-actual").textContent = "Dinero actual: Q" + dineroActual.toFixed(2);
-    
-    // Guardar en la nube (MySQL)
+
+    document.getElementById("ingresos").textContent =
+        "Ingresos: Q" + ingresos.toFixed(2);
+
+    document.getElementById("egresos").textContent =
+        "Egresos: Q" + egresos.toFixed(2);
+
+    document.getElementById("saldo").textContent =
+        "Saldo: Q" + saldo.toFixed(2);
+
     fetch("/balance", {
+
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ dinero: dineroActual })
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+
+            ingresos,
+            egresos,
+            saldo
+        })
     });
 }
 
