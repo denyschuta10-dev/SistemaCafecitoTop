@@ -64,21 +64,46 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // ================= LOGIN =================
 function login() {
+
     const u = document.getElementById("login-usuario").value;
     const c = document.getElementById("login-clave").value;
 
-    if (u === "Denys" && c === "123") {
+    fetch("/login", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            usuario: u,
+            clave: c
+        })
+    })
+    .then(r => r.json())
+    .then(data => {
+
+        if (data.error) {
+
+            document.getElementById("login-error").style.display = "block";
+
+            return;
+        }
+
         sessionStorage.setItem("sesion", "true");
-        sessionStorage.setItem("usuario", u);
+
+        sessionStorage.setItem("usuario", data.usuario);
+
+        sessionStorage.setItem("rol", data.rol);
 
         document.getElementById("login-section").style.display = "none";
+
         document.querySelector("main").style.display = "block";
+
         document.querySelector("aside").style.display = "flex";
 
+        aplicarPermisos();
+
         cargarDatos();
-    } else {
-        document.getElementById("login-error").style.display = "block";
-    }
+    });
 }
 
 

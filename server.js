@@ -177,3 +177,32 @@ app.get("/verificar-codigo/:codigo", (req, res) => {
         }
     );
 });
+
+
+// LOGIN
+app.post("/login", (req, res) => {
+
+    const { usuario, clave } = req.body;
+
+    conexion.query(
+        "SELECT * FROM usuarios WHERE usuario = ? AND clave = ?",
+        [usuario, clave],
+        (err, data) => {
+
+            if (err) {
+                return res.status(500).json(err);
+            }
+
+            if (data.length === 0) {
+                return res.json({
+                    error: "❌ Credenciales incorrectas"
+                });
+            }
+
+            res.json({
+                usuario: data[0].usuario,
+                rol: data[0].rol
+            });
+        }
+    );
+});
