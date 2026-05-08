@@ -475,14 +475,30 @@ function agregarSeguro(codigo, nombre, cantidad, precio, imagen_url) { // <--- A
         }
 
         fetch(API, {
-            method: "POST",
-            headers: {"Content-Type":"application/json"},
-            // Enviamos también la imagen a la base de datos
-            body: JSON.stringify({codigo, nombre, cantidad, precio, imagen_url}) 
-        }).then(() => {
-            alert("✅ PRODUCTO AGREGADO CON ÉXITO");
-            agregarRegistro("Producto agregado: " + nombre);
-            verInventario();
-        });
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({codigo, nombre, cantidad, precio, imagen_url})
+})
+.then(async (res) => {
+
+    const data = await res.json().catch(() => ({}));
+
+    // SI HAY ERROR
+    if (!res.ok) {
+        alert(data.mensaje || "❌ Error al agregar");
+        return;
+    }
+
+    // SI TODO SALE BIEN
+    alert("✅ PRODUCTO AGREGADO CON ÉXITO");
+
+    agregarRegistro("Producto agregado: " + nombre);
+
+    verInventario();
+})
+.catch(err => {
+    console.error(err);
+    alert("❌ Error del servidor");
+});
     });
 }
