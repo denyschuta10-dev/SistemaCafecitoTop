@@ -206,3 +206,31 @@ app.post("/login", (req, res) => {
         }
     );
 });
+
+
+// CREAR USUARIO
+app.post("/usuarios", (req, res) => {
+
+    const { usuario, clave, rol } = req.body;
+
+    conexion.query(
+
+        "INSERT INTO usuarios (usuario, clave, rol) VALUES (?, ?, ?)",
+
+        [usuario, clave, rol],
+
+        (err) => {
+
+            if (err) {
+
+                return res.json({
+                    error: "❌ Usuario ya existe"
+                });
+            }
+
+            res.json({
+                mensaje: "Usuario creado"
+            });
+        }
+    );
+});

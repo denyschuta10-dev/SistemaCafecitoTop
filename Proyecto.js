@@ -58,6 +58,8 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("btn-vender").addEventListener("click", vender);
     document.getElementById("btn-editar").addEventListener("click", editarPrecio);
     document.getElementById("btn-salir").addEventListener("click", salir);
+    document.getElementById("btn-crear-vendedor")
+    .addEventListener("click", crearVendedor);
 
 });
 
@@ -109,13 +111,47 @@ function login() {
 
 // ================= SESION =================
 function verificarSesion() {
+
     if (sessionStorage.getItem("sesion") === "true") {
+
         document.getElementById("login-section").style.display = "none";
+
         document.querySelector("main").style.display = "block";
+
         document.querySelector("aside").style.display = "flex";
+
+        // 🔥 APLICAR PERMISOS
+        aplicarPermisos();
+
         cargarDatos();
+
     } else {
+
         document.getElementById("login-section").style.display = "flex";
+    }
+}
+
+function aplicarPermisos() {
+
+    const rol = sessionStorage.getItem("rol");
+
+    const btnAgregar = document.getElementById("btn-agregar");
+
+    const btnEliminar = document.getElementById("btn-eliminar");
+
+    const btnEditar = document.getElementById("btn-editar");
+
+    const btnCrearVendedor = document.getElementById("btn-crear-vendedor");
+
+    if (rol === "vendedor") {
+
+        btnAgregar.style.display = "none";
+
+        btnEliminar.style.display = "none";
+
+        btnEditar.style.display = "none";
+
+        btnCrearVendedor.style.display = "none";
     }
 }
 
@@ -146,11 +182,54 @@ function salir() {
     if (!confirmar) return;
 
     sessionStorage.removeItem("sesion");
+
     sessionStorage.removeItem("usuario");
 
+    sessionStorage.removeItem("rol");
+
     document.getElementById("login-section").style.display = "flex";
+
     document.querySelector("main").style.display = "none";
+
     document.querySelector("aside").style.display = "none";
+}
+
+function crearVendedor() {
+
+    const usuario = prompt("Usuario del vendedor:");
+
+    if (!usuario) return;
+
+    const clave = prompt("Contraseña:");
+
+    if (!clave) return;
+
+    fetch("/usuarios", {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+            usuario,
+            clave,
+            rol: "vendedor"
+        })
+    })
+    .then(r => r.json())
+    .then(data => {
+
+        if (data.error) {
+
+            alert(data.error);
+
+            return;
+        }
+
+        alert("✅ Vendedor creado correctamente");
+    });
 }
 
 
@@ -522,6 +601,7 @@ function agregarSeguro(codigo, nombre, cantidad, precio, imagen_url) { // <--- A
     headers: {"Content-Type":"application/json"},
     body: JSON.stringify({codigo, nombre, cantidad, precio, imagen_url})
 })
+
 .then(async (res) => {
 
     const data = await res.json().catch(() => ({}));
@@ -539,6 +619,8 @@ function agregarSeguro(codigo, nombre, cantidad, precio, imagen_url) { // <--- A
 
     verInventario();
 })
+
+
 .catch(err => {
     console.error(err);
     alert("❌ Error del servidor");
