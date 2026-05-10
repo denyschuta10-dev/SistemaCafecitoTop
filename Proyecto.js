@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("btn-editar").addEventListener("click", editarPrecio);
     document.getElementById("btn-salir").addEventListener("click", salir);
     document.getElementById("btn-crear-vendedor")
-    .addEventListener("click", crearVendedor);
+.addEventListener("click", abrirModalVendedor);
     document.getElementById("btn-ver-usuarios")
     .addEventListener("click", verUsuarios);
     document.getElementById("close-modal-usuarios")
@@ -734,5 +734,73 @@ function eliminarUsuario(id) {
         alert("✅ Usuario eliminado");
 
         verUsuarios();
+    });
+}
+
+
+function abrirModalVendedor() {
+
+    document.getElementById("modal-vendedor")
+    .classList.add("activo");
+}
+
+function cerrarModalVendedor() {
+
+    document.getElementById("modal-vendedor")
+    .classList.remove("activo");
+}
+
+function crearVendedorFormulario() {
+
+    const nombre =
+    document.getElementById("nuevo-nombre").value;
+
+    const usuario =
+    document.getElementById("nuevo-usuario").value;
+
+    const clave =
+    document.getElementById("nuevo-clave").value;
+
+    if (!nombre || !usuario || !clave) {
+
+        alert("⚠️ Completa todos los campos");
+
+        return;
+    }
+
+    fetch("/usuarios", {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+            nombre,
+            usuario,
+            clave,
+            rol: "vendedor"
+        })
+    })
+    .then(r => r.json())
+    .then(data => {
+
+        if (data.error) {
+
+            alert(data.error);
+
+            return;
+        }
+
+        alert("✅ Vendedor creado correctamente");
+
+        document.getElementById("nuevo-nombre").value = "";
+
+        document.getElementById("nuevo-usuario").value = "";
+
+        document.getElementById("nuevo-clave").value = "";
+
+        cerrarModalVendedor();
     });
 }

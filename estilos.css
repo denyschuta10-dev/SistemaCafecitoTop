@@ -720,3 +720,50 @@ h1 {
     background: #b71c1c;
 }
 
+
+/* =========================
+   FORMULARIO VENDEDOR
+========================= */
+
+#modal-vendedor input {
+
+    width: 100%;
+
+    padding: 12px;
+
+    margin-top: 12px;
+
+    border-radius: 10px;
+
+    border: 1px solid #ccc;
+
+    font-size: 1rem;
+}
+
+#modal-vendedor button {
+
+    width: 100%;
+
+    margin-top: 18px;
+
+    background: #006241;
+
+    color: white;
+
+    border: none;
+
+    padding: 12px;
+
+    border-radius: 10px;
+
+    font-size: 1rem;
+
+    cursor: pointer;
+
+    font-weight: 600;
+}
+
+#modal-vendedor button:hover {
+
+    background: #004d33;
+}
