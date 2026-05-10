@@ -689,12 +689,21 @@ function verUsuarios() {
 
         data.forEach(u => {
 
-           tabla.innerHTML += `
+         tabla.innerHTML += `
     <tr>
         <td>${u.id}</td>
-        <td>${u.nombre}</td>
+        <td>${u.nombre || "Sin nombre"}</td>
         <td>${u.usuario}</td>
         <td>${u.rol}</td>
+        <td>
+            ${
+                u.rol !== "admin"
+                ? `<button onclick="eliminarUsuario(${u.id})">
+                    Eliminar
+                   </button>`
+                : "Protegido"
+            }
+        </td>
     </tr>
 `;
         });
