@@ -355,7 +355,7 @@ h1 {
   max-height: 1200px;
   overflow-y: auto;
   display: flex;
-  flex-direction: column-reverse;
+  flex-direction: column;
   gap: 10px;
 }
 
