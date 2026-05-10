@@ -148,6 +148,8 @@ function aplicarPermisos() {
 
     const btnCrearVendedor = document.getElementById("btn-crear-vendedor");
 
+    const btnVerUsuarios = document.getElementById("btn-ver-usuarios");
+
     if (rol === "vendedor") {
 
         btnAgregar.style.display = "none";
@@ -157,6 +159,8 @@ function aplicarPermisos() {
         btnEditar.style.display = "none";
 
         btnCrearVendedor.style.display = "none";
+
+        btnVerUsuarios.style.display = "none";
     }
 }
 
