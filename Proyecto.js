@@ -375,19 +375,41 @@ function confirmarEliminar() {
             return;
         }
 
-        fetch(API + "/" + p.id, {
-            method: "DELETE"
-        })
-        .then(() => {
+       abrirFormulario("Confirmar Eliminación", `
 
-            agregarRegistro("Eliminado: " + p.nombre);
+    <div class="formulario-moderno">
 
-            verInventario();
+        <p style="text-align:center; font-size:1rem;">
+            ¿Seguro que deseas eliminar:
+            <strong>${p.nombre}</strong>?
+        </p>
 
-            cerrarFormulario();
-        });
+        <button class="btn-danger"
+        onclick="eliminarDefinitivo(${p.id}, '${p.nombre}')">
+            Sí, eliminar
+        </button>
+
+    </div>
+`);
     });
 }
+
+function eliminarDefinitivo(id, nombre) {
+
+    fetch(API + "/" + id, {
+        method: "DELETE"
+    })
+    .then(() => {
+
+        agregarRegistro("Eliminado: " + nombre);
+
+        verInventario();
+
+        cerrarFormulario();
+    });
+}
+
+
 // ================= VENDER =================
 
 function vender() {
