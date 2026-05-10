@@ -274,3 +274,24 @@ app.get("/usuarios", (req, res) => {
         }
     );
 });
+
+// ELIMINAR USUARIO
+app.delete("/usuarios/:id", (req, res) => {
+
+    const { id } = req.params;
+
+    conexion.query(
+        "DELETE FROM usuarios WHERE id = ?",
+        [id],
+        (err) => {
+
+            if (err) {
+                return res.status(500).json(err);
+            }
+
+            res.json({
+                mensaje: "Usuario eliminado"
+            });
+        }
+    );
+});

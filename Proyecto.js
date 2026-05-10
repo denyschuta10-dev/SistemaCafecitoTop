@@ -689,6 +689,15 @@ function verUsuarios() {
                     <td>${u.id}</td>
                     <td>${u.usuario}</td>
                     <td>${u.rol}</td>
+                    <td>
+                        ${
+                            u.rol !== "admin"
+                            ? `<button onclick="eliminarUsuario(${u.id})">
+                                Eliminar
+                               </button>`
+                            : "Protegido"
+                        }
+                    </td>
                 </tr>
             `;
         });
@@ -698,8 +707,26 @@ function verUsuarios() {
     });
 }
 
+
 function cerrarModalUsuarios() {
 
     document.getElementById("modal-usuarios")
     .classList.remove("activo");
+}
+
+function eliminarUsuario(id) {
+
+    const confirmar = confirm("¿Eliminar este usuario?");
+
+    if (!confirmar) return;
+
+    fetch("/usuarios/" + id, {
+        method: "DELETE"
+    })
+    .then(() => {
+
+        alert("✅ Usuario eliminado");
+
+        verUsuarios();
+    });
 }
