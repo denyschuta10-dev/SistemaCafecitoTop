@@ -767,3 +767,54 @@ h1 {
 
     background: #004d33;
 }
+
+
+/* =========================
+   FORMULARIOS MODERNOS
+========================= */
+
+.formulario-moderno {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.formulario-moderno input {
+    padding: 12px;
+    border-radius: 12px;
+    border: 2px solid #ddd;
+    font-size: 1rem;
+    outline: none;
+    transition: 0.3s;
+}
+
+.formulario-moderno input:focus {
+    border-color: #006241;
+    box-shadow: 0 0 0 3px rgba(0,98,65,0.15);
+}
+
+.formulario-moderno button {
+    background: #006241;
+    color: white;
+    border: none;
+    padding: 13px;
+    border-radius: 12px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.3s;
+    font-weight: bold;
+}
+
+.formulario-moderno button:hover {
+    background: #004d33;
+    transform: translateY(-2px);
+}
+
+.btn-danger {
+    background: #d62828 !important;
+}
+
+.btn-danger:hover {
+    background: #a4161a !important;
+}

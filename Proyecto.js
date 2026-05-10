@@ -196,21 +196,33 @@ function cargarDatos() {
 // ================= SALIR =================
 function salir() {
 
-    const confirmar = confirm("¿Estás seguro que quieres salir?");
+    abrirFormulario("Cerrar Sesión", `
 
-    if (!confirmar) return;
+        <div class="formulario-moderno">
 
-    sessionStorage.removeItem("sesion");
+            <p style="text-align:center;">
+                ¿Deseas cerrar sesión?
+            </p>
 
-    sessionStorage.removeItem("usuario");
+            <button class="btn-danger" onclick="confirmarSalir()">
+                Salir
+            </button>
 
-    sessionStorage.removeItem("rol");
+        </div>
+    `);
+}
+
+function confirmarSalir() {
+
+    sessionStorage.clear();
 
     document.getElementById("login-section").style.display = "flex";
 
     document.querySelector("main").style.display = "none";
 
     document.querySelector("aside").style.display = "none";
+
+    cerrarFormulario();
 }
 
 function crearVendedor() {
@@ -292,131 +304,155 @@ function verInventario() {
 // ================= AGREGAR (SIN REPETIDOS) =================
 function agregar() {
 
-    const codigo = prompt("Código:");
+    abrirFormulario("Agregar Producto", `
 
-    if (!codigo) return;
+        <div class="formulario-moderno">
 
-    // Verificar productos actuales
-    fetch(API)
-    .then(r => r.json())
-    .then(async (data) => {
+            <input type="text" id="f-codigo" placeholder="Código">
 
-        // Producto existente actual
-        const existe = data.find(p => p.codigo == codigo);
+            <input type="text" id="f-nombre" placeholder="Nombre">
 
-        if (existe) {
+            <input type="number" id="f-cantidad" placeholder="Cantidad">
 
-            const respuesta = confirm(
-                "⚠️ Este código ya existe.\n\n" +
-                "Producto: " + existe.nombre + "\n" +
-                "Cantidad actual: " + existe.cantidad + "\n\n" +
-                "¿Deseas agregar más cantidad?"
-            );
+            <input type="number" id="f-precio" placeholder="Precio">
 
-            if (!respuesta) return;
+            <input type="text" id="f-imagen" placeholder="URL Imagen">
 
-            const extra = parseInt(prompt("Cantidad a agregar:"));
+            <button onclick="guardarProducto()">
+                Agregar Producto
+            </button>
 
-            if (isNaN(extra) || extra <= 0) {
-                alert("Cantidad inválida");
-                return;
-            }
+        </div>
+    `);
+}
 
-            existe.cantidad += extra;
+function guardarProducto() {
 
-            fetch(API + "/" + existe.id, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(existe)
-            }).then(() => {
+    const codigo = document.getElementById("f-codigo").value;
 
-                agregarRegistro("Stock actualizado: " + existe.nombre);
+    const nombre = document.getElementById("f-nombre").value;
 
-                verInventario();
+    const cantidad = parseInt(document.getElementById("f-cantidad").value);
 
-                alert("✅ STOCK ACTUALIZADO");
-            });
+    const precio = parseFloat(document.getElementById("f-precio").value);
 
-            return;
-        }
+    const imagen_url = document.getElementById("f-imagen").value;
 
-        // 🔥 NUEVA VALIDACIÓN
-        // verificar si el código ya fue usado anteriormente
+    agregarSeguro(codigo, nombre, cantidad, precio, imagen_url);
 
-        const respuestaCodigo = await fetch("/verificar-codigo/" + codigo);
-
-        const resultadoCodigo = await respuestaCodigo.json();
-
-        if (resultadoCodigo.usado) {
-            alert("❌ ESTE CÓDIGO YA FUE UTILIZADO");
-            return;
-        }
-
-        // SI EL CÓDIGO ES NUEVO
-        const nombre = prompt("Nombre:");
-        const cantidad = parseInt(prompt("Cantidad:"));
-        const precio = parseFloat(prompt("Precio:"));
-        const imagen_url = prompt("Link de la imagen (URL):");
-
-        agregarSeguro(codigo, nombre, cantidad, precio, imagen_url);
-    });
+    cerrarFormulario();
 }
 
 // ================= ELIMINAR =================
 function eliminar() {
-    const codigo = prompt("Ingrese el código del producto que desea eliminar:");
-    if (!codigo) return; // Si cancela el prompt, no hace nada
 
-    fetch(API)
-    .then(r => r.json())
-    .then(data => {
-        const p = data.find(x => x.codigo == codigo);
-        if (!p) return alert("❌ Producto no encontrado");
+    abrirFormulario("Eliminar Producto", `
 
-        // --- AJUSTE DE SEGURIDAD: Confirmación antes de borrar ---
-        const confirmar = confirm(`⚠️ ¿Estás seguro de que quieres eliminar el producto: "${p.nombre}"?\nEsta acción no se puede deshacer.`);
+        <div class="formulario-moderno">
 
-        if (confirmar) {
-            fetch(API + "/" + p.id, { method: "DELETE" })
-            .then(() => {
-                agregarRegistro("Eliminado: " + p.nombre);
-                verInventario();
-                alert("✅ Producto eliminado correctamente");
-            });
-        }
-    });
+            <input type="text" id="codigo-eliminar" placeholder="Código del producto">
+
+            <button class="btn-danger" onclick="confirmarEliminar()">
+                Eliminar
+            </button>
+
+        </div>
+    `);
 }
 
-// ================= VENDER =================
-function vender() {
-    const codigo = prompt("Código del producto a vender:");
-    const cantidad = parseInt(prompt("Cantidad:"));
+function confirmarEliminar() {
 
-    if (!codigo || isNaN(cantidad)) return;
+    const codigo = document.getElementById("codigo-eliminar").value;
 
     fetch(API)
     .then(r => r.json())
     .then(data => {
+
         const p = data.find(x => x.codigo == codigo);
-        if (!p) return alert("❌ No encontrado");
-        if (cantidad > p.cantidad) return alert("❌ Sin stock suficiente");
+
+        if (!p) {
+            alert("Producto no encontrado");
+            return;
+        }
+
+        fetch(API + "/" + p.id, {
+            method: "DELETE"
+        })
+        .then(() => {
+
+            agregarRegistro("Eliminado: " + p.nombre);
+
+            verInventario();
+
+            cerrarFormulario();
+        });
+    });
+}
+// ================= VENDER =================
+
+function vender() {
+
+    abrirFormulario("Vender Producto", `
+
+        <div class="formulario-moderno">
+
+            <input type="text" id="codigo-vender" placeholder="Código">
+
+            <input type="number" id="cantidad-vender" placeholder="Cantidad">
+
+            <button onclick="confirmarVenta()">
+                Vender
+            </button>
+
+        </div>
+    `);
+}
+
+function confirmarVenta() {
+
+    const codigo =
+    document.getElementById("codigo-vender").value;
+
+    const cantidad =
+    parseInt(document.getElementById("cantidad-vender").value);
+
+    fetch(API)
+    .then(r => r.json())
+    .then(data => {
+
+        const p = data.find(x => x.codigo == codigo);
+
+        if (!p) return;
+
+        if (cantidad > p.cantidad) return;
 
         p.cantidad -= cantidad;
+
         const totalVenta = p.precio * cantidad;
+
         ingresos += totalVenta;
+
         saldo = ingresos;
 
         fetch(API + "/" + p.id, {
+
             method: "PUT",
-            headers: {"Content-Type":"application/json"},
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
             body: JSON.stringify(p)
+
         }).then(() => {
-            agregarRegistro("Venta: " + p.nombre);
+
             actualizarDinero();
+
+            agregarRegistro("Venta: " + p.nombre);
+
             verInventario();
-            
-            // --- AJUSTE DE ÉXITO: Mensaje de confirmación ---
-            alert(" ¡VENTA REALIZADA EXITOSAMENTE! ✅  ");
+
+            cerrarFormulario();
         });
     });
 }
@@ -438,43 +474,57 @@ function buscar() {
 
 // ================= EDITAR =================
 function editarPrecio() {
-    const codigo = prompt("Código del producto:");
-    if (!codigo) return;
+
+    abrirFormulario("Editar Precio", `
+
+        <div class="formulario-moderno">
+
+            <input type="text" id="codigo-editar" placeholder="Código">
+
+            <input type="number" id="nuevo-precio" placeholder="Nuevo precio">
+
+            <button onclick="guardarNuevoPrecio()">
+                Actualizar
+            </button>
+
+        </div>
+    `);
+}
+
+function guardarNuevoPrecio() {
+
+    const codigo = document.getElementById("codigo-editar").value;
+
+    const nuevoPrecio =
+    parseFloat(document.getElementById("nuevo-precio").value);
 
     fetch(API)
     .then(r => r.json())
     .then(data => {
 
-        const p = data.find(x => String(x.codigo) === String(codigo));
+        const p = data.find(x => x.codigo == codigo);
 
-        if (!p) {
-            alert("❌ Producto no encontrado");
-            return;
-        }
-
-        const nuevo = prompt("Nuevo precio:");
-        const nuevoPrecio = parseFloat(nuevo);
-
-        if (isNaN(nuevoPrecio)) {
-            alert("❌ Precio inválido");
-            return;
-        }
+        if (!p) return;
 
         p.precio = nuevoPrecio;
 
         fetch(API + "/" + p.id, {
+
             method: "PUT",
-            headers: { "Content-Type": "application/json" },
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
             body: JSON.stringify(p)
-        })
-        .then(() => {
-            alert("✅ Precio actualizado");
+
+        }).then(() => {
+
             agregarRegistro("Precio actualizado: " + p.nombre);
+
             verInventario();
-        })
-        .catch(err => {
-            console.error(err);
-            alert("❌ Error al actualizar");
+
+            cerrarFormulario();
         });
     });
 }
@@ -719,6 +769,31 @@ function cerrarModalUsuarios() {
     document.getElementById("modal-usuarios")
     .classList.remove("activo");
 }
+
+// =========================
+// MODAL FORMULARIO
+// =========================
+
+function abrirFormulario(titulo, contenidoHTML) {
+
+    document.getElementById("titulo-formulario").innerHTML = titulo;
+
+    document.getElementById("contenido-formulario").innerHTML = contenidoHTML;
+
+    document.getElementById("modal-formulario")
+    .classList.add("activo");
+}
+
+function cerrarFormulario() {
+
+    document.getElementById("modal-formulario")
+    .classList.remove("activo");
+}
+
+document.getElementById("close-modal-formulario")
+.addEventListener("click", cerrarFormulario);
+
+
 
 function eliminarUsuario(id) {
 
