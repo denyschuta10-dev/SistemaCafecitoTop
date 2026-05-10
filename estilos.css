@@ -352,7 +352,7 @@ h1 {
 
 #registro-lista {
   list-style: none;
-  max-height: 400px;
+  max-height: 75vh;
   overflow-y: auto;
   display: flex;
   flex-direction: column-reverse;
