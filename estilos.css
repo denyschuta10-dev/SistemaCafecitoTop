@@ -635,14 +635,64 @@ h1 {
 ========================= */
 
 #btn-ver-usuarios {
-    background: #ffffff;
-    color: white;
+  background: white;
+  border: 2px solid var(--verde-principal);
+  border-radius: 20px;
+  padding: 20px;
+  font-size: 2.5rem;
+  cursor: pointer;
+  width: 140px;
+  height: 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px var(--sombra);
+  position: relative;
+  overflow: hidden;
+}
+
+#btn-ver-usuarios::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: var(--verde-principal);
+  transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: -1;
+}
+
+#btn-ver-usuarios span {
+  font-size: 0.9rem;
+  margin-top: 10px;
+  color: var(--verde-principal);
+  font-weight: 600;
+  transition: color 0.35s ease;
+}
+
+#btn-ver-usuarios i {
+  font-size: 2.2rem;
+  margin-bottom: 8px;
+  transition: all 0.35s ease;
+  color: var(--verde-principal);
 }
 
 #btn-ver-usuarios:hover {
-    background: #ffffff;
+  transform: translateY(-8px) scale(1.08);
+  box-shadow: 0 12px 24px var(--sombra);
 }
 
+#btn-ver-usuarios:hover::before {
+  left: 0;
+}
+
+#btn-ver-usuarios:hover span,
+#btn-ver-usuarios:hover i {
+  color: white;
+}
 /* =========================
    TABLA RESPONSIVE
 ========================= */
