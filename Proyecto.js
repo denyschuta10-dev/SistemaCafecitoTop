@@ -215,7 +215,11 @@ function salir() {
 
 function crearVendedor() {
 
-    const usuario = prompt("Usuario del vendedor:");
+    const nombre = prompt("Nombre completo del vendedor:");
+
+    if (!nombre) return;
+
+    const usuario = prompt("Usuario que tendrá:");
 
     if (!usuario) return;
 
@@ -232,6 +236,7 @@ function crearVendedor() {
         },
 
         body: JSON.stringify({
+            nombre,
             usuario,
             clave,
             rol: "vendedor"
@@ -684,22 +689,14 @@ function verUsuarios() {
 
         data.forEach(u => {
 
-            tabla.innerHTML += `
-                <tr>
-                    <td>${u.id}</td>
-                    <td>${u.usuario}</td>
-                    <td>${u.rol}</td>
-                    <td>
-                        ${
-                            u.rol !== "admin"
-                            ? `<button onclick="eliminarUsuario(${u.id})">
-                                Eliminar
-                               </button>`
-                            : "Protegido"
-                        }
-                    </td>
-                </tr>
-            `;
+           tabla.innerHTML += `
+    <tr>
+        <td>${u.id}</td>
+        <td>${u.nombre}</td>
+        <td>${u.usuario}</td>
+        <td>${u.rol}</td>
+    </tr>
+`;
         });
 
         document.getElementById("modal-usuarios")

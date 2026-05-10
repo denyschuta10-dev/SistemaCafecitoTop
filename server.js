@@ -234,13 +234,13 @@ app.post("/login", (req, res) => {
 // CREAR USUARIO
 app.post("/usuarios", (req, res) => {
 
-    const { usuario, clave, rol } = req.body;
+    const { nombre, usuario, clave, rol } = req.body;
 
     conexion.query(
 
-        "INSERT INTO usuarios (usuario, clave, rol) VALUES (?, ?, ?)",
+        "INSERT INTO usuarios (nombre, usuario, clave, rol) VALUES (?, ?, ?, ?)",
 
-        [usuario, clave, rol],
+        [nombre, usuario, clave, rol],
 
         (err) => {
 
@@ -263,7 +263,7 @@ app.post("/usuarios", (req, res) => {
 app.get("/usuarios", (req, res) => {
 
     conexion.query(
-        "SELECT id, usuario, rol FROM usuarios",
+        "SELECT id, nombre, usuario, rol FROM usuarios",
         (err, data) => {
 
             if (err) {
