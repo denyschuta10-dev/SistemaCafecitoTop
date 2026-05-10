@@ -61,6 +61,10 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("btn-salir").addEventListener("click", salir);
     document.getElementById("btn-crear-vendedor")
     .addEventListener("click", crearVendedor);
+    document.getElementById("btn-ver-usuarios")
+    .addEventListener("click", verUsuarios);
+    document.getElementById("close-modal-usuarios")
+    .addEventListener("click", cerrarModalUsuarios);
 
 });
 
@@ -492,11 +496,22 @@ function actualizarDinero() {
 
 // ================= REGISTROS (CON MODAL FUNCIONAL) =================
 function agregarRegistro(texto) {
+
+    const usuario = sessionStorage.getItem("usuario") || "Desconocido";
+
     fetch("/actividades", {
+
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ texto: texto })
-    }).then(() => cargarRegistros());
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+            texto: usuario + ": " + texto
+        })
+    })
+    .then(() => cargarRegistros());
 }
 
 
@@ -651,4 +666,36 @@ function agregarSeguro(codigo, nombre, cantidad, precio, imagen_url) { // <--- A
     alert("❌ Error del servidor");
 });
     });
+}
+
+function verUsuarios() {
+
+    fetch("/usuarios")
+    .then(r => r.json())
+    .then(data => {
+
+        const tabla = document.getElementById("tabla-usuarios");
+
+        tabla.innerHTML = "";
+
+        data.forEach(u => {
+
+            tabla.innerHTML += `
+                <tr>
+                    <td>${u.id}</td>
+                    <td>${u.usuario}</td>
+                    <td>${u.rol}</td>
+                </tr>
+            `;
+        });
+
+        document.getElementById("modal-usuarios")
+        .classList.add("activo");
+    });
+}
+
+function cerrarModalUsuarios() {
+
+    document.getElementById("modal-usuarios")
+    .classList.remove("activo");
 }

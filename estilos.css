@@ -603,3 +603,55 @@ h1 {
 }
 
 
+/* =========================
+   MODAL USUARIOS
+========================= */
+
+#modal-usuarios table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+#modal-usuarios th {
+    background: #006241;
+    color: white;
+    padding: 12px;
+    text-align: center;
+}
+
+#modal-usuarios td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+}
+
+#modal-usuarios tr:hover {
+    background: #f5f5f5;
+}
+
+/* =========================
+   BOTON VER USUARIOS
+========================= */
+
+#btn-ver-usuarios {
+    background: #113113;
+    color: white;
+}
+
+#btn-ver-usuarios:hover {
+    background: #113113;
+}
+
+/* =========================
+   TABLA RESPONSIVE
+========================= */
+
+#modal-usuarios {
+    overflow-y: auto;
+}
+
+#modal-usuarios .modal-contenido {
+    max-width: 700px;
+}
+

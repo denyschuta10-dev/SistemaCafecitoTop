@@ -257,3 +257,20 @@ app.post("/usuarios", (req, res) => {
         }
     );
 });
+
+
+// VER USUARIOS
+app.get("/usuarios", (req, res) => {
+
+    conexion.query(
+        "SELECT id, usuario, rol FROM usuarios",
+        (err, data) => {
+
+            if (err) {
+                return res.status(500).json(err);
+            }
+
+            res.json(data);
+        }
+    );
+});

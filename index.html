@@ -43,6 +43,11 @@
             <span>Crear vendedor</span>
         </button>
 
+        <button id="btn-ver-usuarios">
+    <i class="fas fa-users"></i>
+    <span>Ver usuarios</span>
+</button>
+
         <button id="btn-salir">
         <i class="fas fa-sign-out-alt"></i>
         <span>Salir</span>
@@ -103,6 +108,29 @@
         <div id="modal-actividad-detalles"></div>
     </div>
     </div>
+
+
+    <!-- MODAL USUARIOS -->
+<div id="modal-usuarios" class="modal">
+    <div class="modal-contenido">
+        <span class="modal-close" id="close-modal-usuarios">&times;</span>
+
+        <h2>Usuarios del Sistema</h2>
+
+        <table style="width:100%; margin-top:20px;">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Usuario</th>
+                    <th>Rol</th>
+                </tr>
+            </thead>
+
+            <tbody id="tabla-usuarios">
+            </tbody>
+        </table>
+    </div>
+</div>
 
 
     <script src="Proyecto.js" defer></script>
