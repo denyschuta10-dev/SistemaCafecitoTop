@@ -147,17 +147,28 @@ function aplicarPermisos() {
 
     const btnVerUsuarios = document.getElementById("btn-ver-usuarios");
 
+    // Seguridad: comprobar que los elementos existen antes de manipularlos
+    const safeHide = (el) => { if (el) el.style.display = 'none'; };
+    const safeShow = (el, display='inline-block') => { if (el) el.style.display = display; };
+
     if (rol === "vendedor") {
-
-        btnAgregar.style.display = "none";
-
-        btnEliminar.style.display = "none";
-
-
-        btnCrearVendedor.style.display = "none";
-
-        btnVerUsuarios.style.display = "none";
+        safeHide(btnAgregar);
+        safeHide(btnEliminar);
+        safeHide(btnCrearVendedor);
+        safeHide(btnVerUsuarios);
+    } else {
+        safeShow(btnAgregar, 'inline-block');
+        safeShow(btnEliminar, 'inline-block');
+        safeShow(btnCrearVendedor, 'inline-block');
+        safeShow(btnVerUsuarios, 'inline-block');
     }
+
+    // Actualizar botones Edit dentro de tarjetas ya renderizadas
+    const editarBtns = document.querySelectorAll('.btn-editar-card');
+    editarBtns.forEach(b => {
+        if (rol === 'vendedor') b.style.display = 'none';
+        else b.style.display = '';
+    });
 }
 
 
