@@ -149,7 +149,7 @@ function aplicarPermisos() {
 
     // Seguridad: comprobar que los elementos existen antes de manipularlos
     const safeHide = (el) => { if (el) el.style.display = 'none'; };
-    const safeShow = (el, display='inline-block') => { if (el) el.style.display = display; };
+    const safeShow = (el) => { if (el) el.style.display = ''; };
 
     if (rol === "vendedor") {
         safeHide(btnAgregar);
@@ -157,10 +157,10 @@ function aplicarPermisos() {
         safeHide(btnCrearVendedor);
         safeHide(btnVerUsuarios);
     } else {
-        safeShow(btnAgregar, 'inline-block');
-        safeShow(btnEliminar, 'inline-block');
-        safeShow(btnCrearVendedor, 'inline-block');
-        safeShow(btnVerUsuarios, 'inline-block');
+        safeShow(btnAgregar);
+        safeShow(btnEliminar);
+        safeShow(btnCrearVendedor);
+        safeShow(btnVerUsuarios);
     }
 
     // Actualizar botones Edit dentro de tarjetas ya renderizadas
