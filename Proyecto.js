@@ -153,7 +153,6 @@ function aplicarPermisos() {
 
         btnEliminar.style.display = "none";
 
-        btnEditar.style.display = "none";
 
         btnCrearVendedor.style.display = "none";
 
