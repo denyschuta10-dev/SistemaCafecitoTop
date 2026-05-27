@@ -818,3 +818,20 @@ h1 {
 .btn-danger:hover {
     background: #a4161a !important;
 }
+
+/* Botón editar dentro de cada tarjeta */
+.btn-editar-card {
+  margin-top: 12px;
+  background: #006241;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.btn-editar-card:hover {
+  background: #004d33;
+  transform: translateY(-2px);
+}

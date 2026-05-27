@@ -57,7 +57,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("btn-agregar").addEventListener("click", agregar);
     document.getElementById("btn-eliminar").addEventListener("click", eliminar);
     document.getElementById("btn-vender").addEventListener("click", vender);
-    document.getElementById("btn-editar").addEventListener("click", editarPrecio);
     document.getElementById("btn-salir").addEventListener("click", salir);
     document.getElementById("btn-crear-vendedor")
 .addEventListener("click", abrirModalVendedor);
@@ -143,8 +142,6 @@ function aplicarPermisos() {
     const btnAgregar = document.getElementById("btn-agregar");
 
     const btnEliminar = document.getElementById("btn-eliminar");
-
-    const btnEditar = document.getElementById("btn-editar");
 
     const btnCrearVendedor = document.getElementById("btn-crear-vendedor");
 
@@ -280,21 +277,37 @@ function verInventario() {
         data.forEach(p => {
             const div = document.createElement("div");
             div.className = "tarjeta";
-            
-            // Si tiene link usa la foto, si no, usa un icono por defecto. 
-            // 'onerror' sirve por si el link está roto.
-            const imagen = p.imagen_url 
-            ? `<img src="${p.imagen_url}" class="img-producto-tarjeta" onerror="this.src='https://cdn-icons-png.flaticon.com/512/924/924514.png'">` 
+
+            // Si tiene link usa la foto, si no, usa un icono por defecto.
+            const imagen = p.imagen_url
+            ? `<img src="${p.imagen_url}" class="img-producto-tarjeta" onerror="this.src='https://cdn-icons-png.flaticon.com/512/924/924514.png'">`
             : `<i class="fas fa-coffee fa-3x" style="margin-bottom:10px; color:#006241;"></i>`;
-            
+
             div.innerHTML = `
-            ${imagen} 
+            ${imagen}
             <h3>${p.nombre}</h3>
             <p>Código: ${p.codigo}</p>
             <p>Cantidad: ${p.cantidad}</p>
             <p>Precio: Q${p.precio}</p>
             `;
-            
+
+            // Botón editar dentro de la tarjeta
+            const editarBtn = document.createElement('button');
+            editarBtn.className = 'btn-editar-card';
+            editarBtn.textContent = 'Editar';
+            editarBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                abrirEditarProducto(p);
+            });
+
+            // Aplicar permisos por rol: ocultar editar si es vendedor
+            const rol = sessionStorage.getItem('rol');
+            if (rol === 'vendedor') {
+                editarBtn.style.display = 'none';
+            }
+
+            div.appendChild(editarBtn);
+
             div.addEventListener("click", () => abrirModalProducto(p));
             cont.appendChild(div);
         });
@@ -495,59 +508,44 @@ function buscar() {
 
 
 // ================= EDITAR =================
-function editarPrecio() {
-
-    abrirFormulario("Editar Precio", `
-
+function abrirEditarProducto(p) {
+    abrirFormulario("Editar Producto", `
         <div class="formulario-moderno">
-
-            <input type="text" id="codigo-editar" placeholder="Código">
-
-            <input type="number" id="nuevo-precio" placeholder="Nuevo precio">
-
-            <button onclick="guardarNuevoPrecio()">
-                Actualizar
-            </button>
-
+            <input type="text" id="edit-codigo" placeholder="Código" value="${p.codigo}">
+            <input type="text" id="edit-nombre" placeholder="Nombre" value="${p.nombre}">
+            <input type="number" id="edit-cantidad" placeholder="Cantidad" value="${p.cantidad}">
+            <input type="number" id="edit-precio" placeholder="Precio" value="${p.precio}">
+            <input type="text" id="edit-imagen" placeholder="URL Imagen" value="${p.imagen_url || ''}">
+            <div style="margin-top:10px; text-align:right;">
+                <button onclick="guardarEdicion(${p.id})">Guardar</button>
+            </div>
         </div>
     `);
 }
 
-function guardarNuevoPrecio() {
+function guardarEdicion(id) {
+    const codigo = document.getElementById('edit-codigo').value;
+    const nombre = document.getElementById('edit-nombre').value;
+    const cantidad = parseInt(document.getElementById('edit-cantidad').value) || 0;
+    const precio = parseFloat(document.getElementById('edit-precio').value) || 0;
+    const imagen_url = document.getElementById('edit-imagen').value;
 
-    const codigo = document.getElementById("codigo-editar").value;
+    const producto = { codigo, nombre, cantidad, precio, imagen_url };
 
-    const nuevoPrecio =
-    parseFloat(document.getElementById("nuevo-precio").value);
-
-    fetch(API)
+    fetch(API + '/' + id, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(producto)
+    })
     .then(r => r.json())
-    .then(data => {
-
-        const p = data.find(x => x.codigo == codigo);
-
-        if (!p) return;
-
-        p.precio = nuevoPrecio;
-
-        fetch(API + "/" + p.id, {
-
-            method: "PUT",
-
-            headers: {
-                "Content-Type": "application/json"
-            },
-
-            body: JSON.stringify(p)
-
-        }).then(() => {
-
-            agregarRegistro("Precio actualizado: " + p.nombre);
-
-            verInventario();
-
-            cerrarFormulario();
-        });
+    .then(() => {
+        agregarRegistro('Producto editado: ' + nombre);
+        verInventario();
+        cerrarFormulario();
+    })
+    .catch(err => {
+        console.error('Error editando producto:', err);
+        alert('Error al guardar cambios');
     });
 }
 
