@@ -113,19 +113,39 @@ app.post('/productos', (req, res) => {
 
 // PUT (CORREGIDO)
 app.put("/productos/:id", (req, res) => {
-    // Agregamos imagen_url aquí también
+    // Control de permisos por rol: solo admin puede cambiar campos sensibles
     const { codigo, nombre, cantidad, precio, imagen_url } = req.body;
     const { id } = req.params;
 
-    const sql = `
-        UPDATE productos 
-        SET codigo = ?, nombre = ?, cantidad = ?, precio = ?, imagen_url = ?
-        WHERE id = ?
-    `;
+    const role = (req.headers['x-role'] || req.headers['role'] || '').toString();
 
-    conexion.query(sql, [codigo, nombre, cantidad, precio, imagen_url, id], (err) => {
+    // Obtener producto actual para comparar qué campos cambian
+    conexion.query('SELECT * FROM productos WHERE id = ?', [id], (err, rows) => {
         if (err) return res.status(500).json(err);
-        res.json({ mensaje: "Actualizado" });
+        if (!rows || rows.length === 0) return res.status(404).json({ mensaje: 'Producto no encontrado' });
+
+        const actual = rows[0];
+
+        const cambiosSensibles = [];
+        if (codigo !== actual.codigo) cambiosSensibles.push('codigo');
+        if (nombre !== actual.nombre) cambiosSensibles.push('nombre');
+        if (precio !== actual.precio) cambiosSensibles.push('precio');
+        if ((imagen_url || '') !== (actual.imagen_url || '')) cambiosSensibles.push('imagen_url');
+
+        if (cambiosSensibles.length > 0 && role !== 'admin') {
+            return res.status(403).json({ mensaje: 'No autorizado: solo admin puede modificar nombre/código/precio/imagen' });
+        }
+
+        const sql = `
+            UPDATE productos 
+            SET codigo = ?, nombre = ?, cantidad = ?, precio = ?, imagen_url = ?
+            WHERE id = ?
+        `;
+
+        conexion.query(sql, [codigo, nombre, cantidad, precio, imagen_url, id], (err) => {
+            if (err) return res.status(500).json(err);
+            res.json({ mensaje: "Actualizado" });
+        });
     });
 });
 

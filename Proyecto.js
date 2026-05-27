@@ -474,7 +474,8 @@ function confirmarVenta() {
             method: "PUT",
 
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "x-role": sessionStorage.getItem('rol') || ''
             },
 
             body: JSON.stringify(p)
@@ -534,7 +535,7 @@ function guardarEdicion(id) {
 
     fetch(API + '/' + id, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'x-role': sessionStorage.getItem('rol') || '' },
         body: JSON.stringify(producto)
     })
     .then(r => r.json())
@@ -679,7 +680,7 @@ function editarDesdeModal() {
 
         fetch(API + "/" + p.id, {
             method: "PUT",
-            headers: {"Content-Type":"application/json"},
+            headers: {"Content-Type":"application/json", 'x-role': sessionStorage.getItem('rol') || ''},
             body: JSON.stringify(p)
         }).then(() => {
             alert("Actualizado desde modal");
