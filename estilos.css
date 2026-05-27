@@ -366,6 +366,18 @@ h1 {
   color: var(--gris);
   transition: all 0.2s ease;
   padding: 8px 0 8px 12px;
+  animation: slideInActivity 0.4s ease forwards;
+}
+
+@keyframes slideInActivity {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 #registro-lista li:hover {

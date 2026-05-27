@@ -615,6 +615,7 @@ function cargarRegistros() {
             const li = document.createElement("li");
             const fecha = new Date(act.fecha).toLocaleString();
             li.textContent = `[${fecha}] ${act.texto}`;
+            li.className = 'actividad-item';
             
             li.addEventListener("click", () => {
                 abrirModalActividad({ texto: act.texto, fecha: fecha });
@@ -622,6 +623,10 @@ function cargarRegistros() {
 
             lista.appendChild(li);
         });
+        // Auto scroll al final (actividad más reciente)
+        if (lista.children.length > 0) {
+            lista.children[0].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
     });
 }
 
