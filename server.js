@@ -8,21 +8,38 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static('.'));
 
-// 🔌 conexión MySQL
-const conexion = mysql.createConnection({
+// 🔌 configuración MySQL (compatible con Aiven)
+const dbConfig = {
     host: process.env.MYSQL_HOST || process.env.MYSQLHOST || process.env.DB_HOST || "localhost",
     user: process.env.MYSQL_USER || process.env.MYSQLUSER || process.env.DB_USER || "root",
     password: process.env.MYSQL_PASSWORD || process.env.MYSQLPASSWORD || process.env.DB_PASSWORD || "",
     database: process.env.MYSQL_DATABASE || process.env.MYSQLDATABASE || process.env.DB_NAME || "inventario_db",
     port: process.env.MYSQL_PORT || process.env.MYSQLPORT || 3306
-});
+};
 
-conexion.connect(err => {
-    if (err) {
-        console.error("❌ Error MySQL:", err.message);
-        return;
+// Si Aiven provee el certificado CA en base64 en la variable AIVEN_CA, úsalo.
+if (process.env.AIVEN_CA) {
+    try {
+        dbConfig.ssl = { ca: Buffer.from(process.env.AIVEN_CA, 'base64') };
+    } catch (e) {
+        console.error("❌ Error procesando AIVEN_CA:", e.message);
     }
-    console.log("✅ Conectado a MySQL");
+} else if (process.env.DB_SSL_ALLOW_INSECURE === 'true') {
+    // Modo inseguro (solo para pruebas): permitir conexión sin verificar el certificado
+    dbConfig.ssl = { rejectUnauthorized: false };
+}
+
+// Usar pool para conexiones más fiables en entornos cloud
+const conexion = mysql.createPool(dbConfig);
+
+// Probar conexión inicial
+conexion.getConnection((err, conn) => {
+    if (err) {
+        console.error("❌ Error MySQL:", err.message || err);
+    } else {
+        console.log("✅ Conectado a MySQL");
+        conn.release();
+    }
 });
 
 
@@ -48,7 +65,10 @@ app.post('/productos', (req, res) => {
         [codigo],
         (err, usados) => {
 
-            if (err) return res.status(500).send(err);
+            if (err) {
+                console.error("Error comprobando codigos_usados:", err);
+                return res.status(500).json({ mensaje: err.message || err });
+            }
 
             // Si ya existe el código
             if (usados.length > 0) {
@@ -69,15 +89,21 @@ app.post('/productos', (req, res) => {
                 [codigo, nombre, cantidad, precio, imagen_url],
                 (err) => {
 
-                    if (err) return res.status(500).send(err);
+                    if (err) {
+                        console.error("Error insertando producto:", err);
+                        return res.status(500).json({ mensaje: err.message || err });
+                    }
 
-                    // Guardar el código como usado
+                    // Guardar el código como usado (loguear si falla)
                     conexion.query(
                         "INSERT INTO codigos_usados (codigo) VALUES (?)",
-                        [codigo]
+                        [codigo],
+                        (err) => {
+                            if (err) console.error("Error guardando codigo usado:", err);
+                        }
                     );
 
-                    res.send("✅ Producto agregado");
+                    res.json({ mensaje: "✅ Producto agregado" });
                 }
             );
         }
