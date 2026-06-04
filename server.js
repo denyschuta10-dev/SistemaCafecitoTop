@@ -7,7 +7,8 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static('.'));
+// No servir archivos estáticos: solo API
+
 
 // 🔌 configuración MySQL (compatible con Aiven)
 const dbConfig = {
@@ -220,6 +221,20 @@ app.post("/actividades", (req, res) => {
 });
 
 // ================= SERVER =================
+// Ruta raíz: información mínima de la API
+app.get('/', (req, res) => {
+    res.json({
+        mensaje: 'SistemaCafecitoTop API',
+        version: '1.0',
+        endpoints: [
+            '/productos',
+            '/balance',
+            '/actividades',
+            '/usuarios',
+            '/download'
+        ]
+    });
+});
 // RUTA: descargar el proyecto como ZIP
 app.get('/download', (req, res) => {
 
