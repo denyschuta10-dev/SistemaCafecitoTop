@@ -7,7 +7,6 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static('.'));
 
 // --- Protección con API Key ---
 const REQUIRED_API_KEY = process.env.API_KEY || '';
@@ -23,6 +22,21 @@ function requireApiKey(req, res, next) {
     next();
 }
 
+// Ruta raíz de API
+app.get('/', (req, res) => {
+    res.json({
+        mensaje: 'SistemaCafecitoTop API',
+        endpoints: [
+            '/productos',
+            '/balance',
+            '/actividades',
+            '/usuarios',
+            '/login',
+            '/download',
+            '/verificar-codigo/:codigo'
+        ]
+    });
+});
 
 // 🔌 configuración MySQL (compatible con Aiven)
 const dbConfig = {

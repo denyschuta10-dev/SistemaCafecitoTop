@@ -69,7 +69,7 @@ Si necesitas permitir conexión sin verificar certificado (solo para pruebas):
 - `DB_SSL_ALLOW_INSECURE` = `true`
 
 Notas:
-- El servidor ya usa `process.env.PORT` y `express.static('.')`.
+- Este servidor está diseñado como API y devuelve JSON o archivos, no sirve la UI estática.
 - Verás errores de conexión MySQL en los logs si no configuras las variables de entorno antes del despliegue; eso es normal.
 
 ## Seguridad y recomendaciones
