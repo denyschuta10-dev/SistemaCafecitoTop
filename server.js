@@ -9,6 +9,20 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static('.'));
 
+// --- Protección con API Key ---
+const REQUIRED_API_KEY = process.env.API_KEY || '';
+function requireApiKey(req, res, next) {
+    const key = (req.headers['x-api-key'] || req.query.api_key || '').toString();
+    if (!REQUIRED_API_KEY) {
+        // Si no está configurada la API_KEY en el entorno, permitir (modo compatibilidad)
+        return next();
+    }
+    if (!key || key !== REQUIRED_API_KEY) {
+        return res.status(401).json({ error: 'No autorizado: API key inválida' });
+    }
+    next();
+}
+
 
 // 🔌 configuración MySQL (compatible con Aiven)
 const dbConfig = {
@@ -57,7 +71,7 @@ app.get("/productos", (req, res) => {
 
 
 // POST
-app.post('/productos', (req, res) => {
+app.post('/productos', requireApiKey, (req, res) => {
 
     const { codigo, nombre, cantidad, precio, imagen_url } = req.body;
 
@@ -114,7 +128,7 @@ app.post('/productos', (req, res) => {
 
 
 // PUT (CORREGIDO)
-app.put("/productos/:id", (req, res) => {
+app.put("/productos/:id", requireApiKey, (req, res) => {
     // Control de permisos por rol: solo admin puede cambiar campos sensibles
     const { codigo, nombre, cantidad, precio, imagen_url } = req.body;
     const { id } = req.params;
@@ -153,7 +167,7 @@ app.put("/productos/:id", (req, res) => {
 
 
 // DELETE
-app.delete("/productos/:id", (req, res) => {
+app.delete("/productos/:id", requireApiKey, (req, res) => {
     const { id } = req.params;
 
     conexion.query("DELETE FROM productos WHERE id = ?", [id], (err) => {
@@ -180,7 +194,7 @@ app.get("/balance", (req, res) => {
 });
 
 // Actualizar dinero
-app.put("/balance", (req, res) => {
+app.put("/balance", requireApiKey, (req, res) => {
 
     const { ingresos, saldo } = req.body;
 
@@ -212,7 +226,7 @@ app.get("/actividades", (req, res) => {
 });
 
 // Guardar actividad
-app.post("/actividades", (req, res) => {
+app.post("/actividades", requireApiKey, (req, res) => {
     const { texto } = req.body;
     conexion.query("INSERT INTO actividades (texto, fecha) VALUES (?, NOW())", [texto], (err) => {
         if (err) return res.status(500).json(err);
@@ -223,7 +237,7 @@ app.post("/actividades", (req, res) => {
 // ================= SERVER =================
 
 // RUTA: descargar el proyecto como ZIP
-app.get('/download', (req, res) => {
+app.get('/download', requireApiKey, (req, res) => {
 
     const archive = archiver('zip', { zlib: { level: 9 } });
 
@@ -306,7 +320,7 @@ app.post("/login", (req, res) => {
 
 
 // CREAR USUARIO
-app.post("/usuarios", (req, res) => {
+app.post("/usuarios", requireApiKey, (req, res) => {
 
     const { nombre, usuario, clave, rol } = req.body;
 
@@ -350,7 +364,7 @@ app.get("/usuarios", (req, res) => {
 });
 
 // ELIMINAR USUARIO
-app.delete("/usuarios/:id", (req, res) => {
+app.delete("/usuarios/:id", requireApiKey, (req, res) => {
 
     const { id } = req.params;
 

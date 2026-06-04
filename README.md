@@ -77,6 +77,21 @@ Notas:
 - No subir credenciales al repo. Configura todas las variables en el panel de Render.
 - Considera usar HTTPS y revistar `express.static('.')` para no exponer archivos sensibles.
 
+### Protección con API Key
+
+Para proteger endpoints sensibles (creación/actualización/eliminación y la descarga), el servidor admite una `API_KEY` configurable a través de la variable de entorno `API_KEY`.
+
+- Configura en Render: `API_KEY = <tu_clave_secreta>`
+- En las peticiones, envía el header `x-api-key: <tu_clave_secreta>` o añade `?api_key=<tu_clave_secreta>` en la URL.
+
+Ejemplo con `curl` para descargar el ZIP protegido:
+
+```bash
+curl -H "x-api-key: TU_CLAVE" -o proyecto.zip https://sistemacafecitotop.onrender.com/download
+```
+
+Si `API_KEY` no está configurada, el servidor mantiene compatibilidad y permite las peticiones (modo sin protección). Se recomienda establecer la variable en producción.
+
 ¿Quieres que:
 - suba estos cambios a un nuevo repo en GitHub y cree la página en Render (te pido permisos para tu cuenta o instrucciones), o
 - sólo te guíe paso a paso para conectar el repo en Render?"}
