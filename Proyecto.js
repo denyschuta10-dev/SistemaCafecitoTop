@@ -62,6 +62,8 @@ document.addEventListener("DOMContentLoaded", () => {
 .addEventListener("click", abrirModalVendedor);
     document.getElementById("btn-ver-usuarios")
     .addEventListener("click", verUsuarios);
+    const btnDescargar = document.getElementById('btn-descargar');
+    if (btnDescargar) btnDescargar.addEventListener('click', downloadProject);
     document.getElementById("close-modal-usuarios")
     .addEventListener("click", cerrarModalUsuarios);
 
@@ -913,5 +915,32 @@ function crearVendedorFormulario() {
         document.getElementById("nuevo-clave").value = "";
 
         cerrarModalVendedor();
+    });
+}
+
+// =========================
+// DESCARGAR PROYECTO (BOTÓN)
+// =========================
+function downloadProject() {
+    // Descarga el ZIP desde /download y fuerza guardar
+    fetch('/download')
+    .then(response => {
+        if (!response.ok) throw new Error('Error al descargar');
+        return response.blob();
+    })
+    .then(blob => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'proyecto.zip';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+        alert('✅ Descarga iniciada: proyecto.zip');
+    })
+    .catch(err => {
+        console.error(err);
+        alert('❌ Error al descargar el proyecto');
     });
 }
