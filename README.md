@@ -79,18 +79,20 @@ Notas:
 
 ### Protección con API Key
 
-Para proteger endpoints sensibles (creación/actualización/eliminación y la descarga), el servidor admite una `API_KEY` configurable a través de la variable de entorno `API_KEY`.
+Para proteger endpoints sensibles (creación/actualización/eliminación), el servidor admite una `API_KEY` configurable a través de la variable de entorno `API_KEY`.
 
 - Configura en Render: `API_KEY = <tu_clave_secreta>`
 - En las peticiones, envía el header `x-api-key: <tu_clave_secreta>` o añade `?api_key=<tu_clave_secreta>` en la URL.
 
-Ejemplo con `curl` para descargar el ZIP protegido:
+Nota: la ruta `GET /download` se mantiene pública por diseño para facilitar la descarga del ZIP del proyecto. Si prefieres protegerla, puedo cambiarlo para requerir `API_KEY`.
+
+Ejemplo con `curl` para descargar el ZIP (público):
 
 ```bash
-curl -H "x-api-key: TU_CLAVE" -o proyecto.zip https://sistemacafecitotop.onrender.com/download
+curl -o proyecto.zip https://sistemacafecitotop.onrender.com/download
 ```
 
-Si `API_KEY` no está configurada, el servidor mantiene compatibilidad y permite las peticiones (modo sin protección). Se recomienda establecer la variable en producción.
+Si `API_KEY` no está configurada, el servidor mantiene compatibilidad y permite las peticiones (modo sin protección). Se recomienda establecer la variable en producción para proteger endpoints sensibles.
 
 ¿Quieres que:
 - suba estos cambios a un nuevo repo en GitHub y cree la página en Render (te pido permisos para tu cuenta o instrucciones), o

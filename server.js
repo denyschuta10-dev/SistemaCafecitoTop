@@ -237,7 +237,8 @@ app.post("/actividades", requireApiKey, (req, res) => {
 // ================= SERVER =================
 
 // RUTA: descargar el proyecto como ZIP
-app.get('/download', requireApiKey, (req, res) => {
+// `/download` público: no requiere API key
+app.get('/download', (req, res) => {
 
     const archive = archiver('zip', { zlib: { level: 9 } });
 
