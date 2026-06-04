@@ -7,6 +7,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static('.'));
 
 // --- Protección con API Key ---
 const REQUIRED_API_KEY = process.env.API_KEY || '';
@@ -23,10 +24,11 @@ function requireApiKey(req, res, next) {
 }
 
 // Ruta raíz de API
-app.get('/', (req, res) => {
+app.get('/api', (req, res) => {
     res.json({
         mensaje: 'SistemaCafecitoTop API',
         endpoints: [
+            '/api',
             '/productos',
             '/balance',
             '/actividades',

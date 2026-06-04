@@ -49,7 +49,7 @@ Render funciona bien con este proyecto. Pasos resumidos:
    - **Build Command**: `npm install`
    - **Start Command**: `npm start`
    - **Environment**: añadir variables necesarias (más abajo)
-   - **Health Check Path**: puedes usar `/productos` o `/` para comprobar estado
+   - **Health Check Path**: puedes usar `/productos` o `/api` para comprobar estado
 
 Variables de entorno recomendadas (ajusta según tu base de datos):
 
