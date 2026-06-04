@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const mysql = require("mysql2");
+const archiver = require('archiver');
 
 const app = express();
 
@@ -219,6 +220,31 @@ app.post("/actividades", (req, res) => {
 });
 
 // ================= SERVER =================
+// RUTA: descargar el proyecto como ZIP
+app.get('/download', (req, res) => {
+
+    const archive = archiver('zip', { zlib: { level: 9 } });
+
+    res.setHeader('Content-Type', 'application/zip');
+    res.setHeader('Content-Disposition', 'attachment; filename="SistemaCafecitoTopProyecto2.zip"');
+
+    archive.on('error', (err) => {
+        console.error('Error creando ZIP:', err);
+        res.status(500).send({ error: 'Error creando ZIP' });
+    });
+
+    archive.pipe(res);
+
+    // Archivar los archivos principales del proyecto (excluir node_modules)
+    const filesToInclude = ['db.js', 'estilos.css', 'index.html', 'package.json', 'Proyecto.js', 'server.js'];
+
+    filesToInclude.forEach(f => {
+        archive.file(f, { name: f });
+    });
+
+    archive.finalize();
+});
+
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
